@@ -4,6 +4,8 @@ from markupsafe import escape
 from flask import render_template
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
+from flask import redirect
+from flask import url_for
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://rafaeasy:183025@localhost:3306/meubanco'
@@ -30,12 +32,15 @@ def index():
     return render_template('index.html')
 
 @app.route("/cad/usuario")
-def usuario():
+def cadusuario():
     return render_template('usuario.html', titulo="Cadastro de Usuario")
 
 @app.route("/cad/caduser", methods=['POST'])
 def caduser():
-    return request.form
+    usuario = Usuario(request.form.get('user'), request.form.get('email'), request.form.get('passwd'), request.form.ger('end'))
+    db.session.add(usuario)
+    db.session.commit()
+    return redirect(url_for(cadusuario))
 
 @app.route("/cad/anuncio")
 def anuncio():
