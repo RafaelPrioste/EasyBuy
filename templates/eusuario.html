@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy BUY - Compra e Venda - Edição {{titulo}}</title>
+</head>
+
+
+<body>
+    <div class="container mt-4 mb-4">
+        <div class="page-header">
+            <h2>Edição de {{titulo}}</h2>
+        </div>
+
+        <form action="/usuario/editar/{{usuario.id}}" method="post">
+        <div class="form-group">
+            <label for="user">Username:</label>
+            <input type="text" class="form-control" id="user" name="user" value="{{usuario.nome}}">
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input type="text" class="form-control" id="email" name="email" value="{{usuario.email}}">
+        </div>
+
+        <div class="form-group">
+            <label for="passwd">Password:</label>
+            <input type="text" class="form-control" id="passwd" name="passwd" value="{{usuario.passwd}}">
+        </div>
+
+        <div class="form-group">
+            <label for="endereco">Endereço:</label>
+            <input type="text" class="form-control" id="end" name="end" value="{{usuario.end}}">
+        </div>
+
+        <button type="submit" class="btn btn-success mt-2">Editar</button>
+        <a class="btn btn-danger mt-2" href={{url_for("usuario")}}>Cancelar</a>
+        </form>
+    </div>
+        
+</body>
+
+</html> 
