@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy BUY - Login</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+</head>
+<body>
+    <div class="container mt-4 mb-4">
+        <div class="page-header">
+            <h3>Login</h3>
+        </div>
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" class="form-control" id="email" name="email">
+            </div>
+
+            <div class="form-group">
+                <label for="passwd">Senha</label>
+                <input type="passwd" class="form-control" id="passwd" name="passwd">
+            </div>
+
+            <button type="submit" class="btn btn-outline-success mt-2">Fazer Login</button>
+            <a class="btn btn-outline-danger mt-2" href={{url_for('index')}}>Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>
