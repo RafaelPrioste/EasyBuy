@@ -4,7 +4,7 @@ from flask_login import (current_user, LoginManager, login_user, logout_user, lo
 import hashlib
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://rafaeasy:183025@localhost:3306/meubanco'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://buyuser:25111990@localhost:3306/bancocerto'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'Madame teia nao solta virus'
 
@@ -133,7 +133,7 @@ def login():
     return render_template('login.html')
 
 @app.route("/logout")
-#@login_required
+@login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
@@ -146,12 +146,12 @@ def index():
     return render_template('index.html', titulo="Anúncios", anuncio=Anuncio.query.all())
 
 @app.route("/cad/usuario")
-#@login_required
+@login_required
 def rota_usuario():
     return render_template('usuario.html', usuarios=Usuario.query.all(), titulo="Usuários")
 
 @app.route("/usuario/criar", methods=['POST'])
-#@login_required
+@login_required
 def cadastrar_usuario():
     hash_senha = hashlib.sha512(request.form.get('passwd').encode("utf-8")).hexdigest()
     usuario = Usuario(request.form.get('user'), request.form.get('email'), hash_senha, request.form.get('end'))
@@ -160,7 +160,7 @@ def cadastrar_usuario():
     return redirect(url_for('usuario'))
 
 @app.route("/usuario/editar/<int:id>", methods=['GET', 'POST'])
-#@login_required
+@login_required
 def editar_usuario(id):
     usuario = Usuario.query.get(id)
     if request.method == 'POST':
@@ -173,7 +173,7 @@ def editar_usuario(id):
     return render_template('eusuario.html', usuario=usuario, titulo="Editar Usuário")
 
 @app.route("/usuario/remover/<int:id>", methods=['POST'])
-#@login_required
+@login_required
 def removusuario(id):
     if current_user.id == id:
         usuario = Usuario.query.get(id)
@@ -182,12 +182,15 @@ def removusuario(id):
     return redirect(url_for('usuario'))
 
 @app.route("/cad/anuncio")
-#@login_required
+@login_required
 def anuncio():
-    return render_template('anuncio.html', anuncio=Anuncio.query.all(), categorias=Categoria.query.all(), titulo="Anúncios")
+  
+    anuncios = db.session.query(Anuncio, Categoria).join(Categoria, Anuncio.cat_id == Categoria.id).all()
+    
+    return render_template('anuncio.html', anuncios=anuncios, categorias=Categoria.query.all(), titulo="Anúncios")
 
 @app.route("/anuncio/criar", methods=['POST'])
-#@login_required
+@login_required
 def criaranuncio():
     anuncio = Anuncio(request.form.get('nome'), request.form.get('desc'), int(request.form.get('qtd')), float(request.form.get('preco')), int(request.form.get('cat')), current_user.id)
     db.session.add(anuncio)
@@ -195,7 +198,7 @@ def criaranuncio():
     return redirect(url_for('anuncio'))
 
 @app.route("/anuncio/editar/<int:id>", methods=['GET', 'POST'])
-#@login_required
+@login_required
 def editanuncio(id):
     anuncio = Anuncio.query.get(id)
     if request.method == 'POST':
@@ -209,7 +212,7 @@ def editanuncio(id):
     return render_template('anuncio-edit.html', anuncio=anuncio, categorias=Categoria.query.all(), titulo="Editar Anúncio")
 
 @app.route("/anuncio/remover/<int:id>", methods=['POST'])
-#@login_required
+@login_required
 def remover_anuncio(id):
     anuncio = Anuncio.query.get(id)
     db.session.delete(anuncio)
@@ -217,7 +220,7 @@ def remover_anuncio(id):
     return redirect(url_for('anuncio'))
 
 @app.route("/anuncio/comprar/<int:id>", methods=['POST'])
-#@login_required
+@login_required
 def comprar_anuncio(id):
     compra = Compra(id, current_user.id)
     db.session.add(compra)
@@ -225,7 +228,7 @@ def comprar_anuncio(id):
     return redirect(url_for('relatorio_venda'))
 
 @app.route("/anuncio/favoritar/<int:id>", methods=['POST'])
-#@login_required
+@login_required
 def favoritar_anuncio(id):
     favorito = Favorito(id, current_user.id)
     db.session.add(favorito)
@@ -233,7 +236,7 @@ def favoritar_anuncio(id):
     return redirect(url_for('anuncio-favorito'))
 
 @app.route("/anuncio/pergunta", methods=['GET', 'POST'])
-#@login_required
+@login_required
 def pergunta():
     if request.method == 'POST':
         pergunta = Pergunta(request.form.get('texto'), request.form.get('anuncio_id'), current_user.id)
@@ -243,7 +246,7 @@ def pergunta():
     return render_template('pergunta.html', anuncio=Anuncio.query.all(), perguntas=Pergunta.query.all(), titulo="Faça uma Pergunta")
 
 @app.route("/anuncio/resposta/enviar/<int:id>", methods=['POST'])
-#@login_required
+@login_required
 def enviar_resposta(id):
     resposta = Resposta(request.form.get('texto'), id, current_user.id)
     db.session.add(resposta)
@@ -251,17 +254,18 @@ def enviar_resposta(id):
     return redirect(url_for('pergunta'))
 
 @app.route("/anuncio/favoritos")
-#@login_required
+@login_required
 def anuncio_favorito():
-    return render_template('anuncio-favorito.html', favoritos=Favorito.query.filter_by(usuario_id=current_user.id).all(), titulo="Lista de Favoritos")
+    favoritos = Favorito.query.all()
+    return render_template('anuncio-favorito.html', favoritos=favoritos, titulo="Lista de Favoritos")
 
 @app.route("/config/categoria")
-#@login_required
+@login_required
 def categoria():
     return render_template('categoria.html', categorias=Categoria.query.all(), titulo="Categorias")
 
 @app.route("/categoria/cadastrar", methods=['POST'])
-#@login_required
+@login_required
 def cadastrar_categoria():
     categoria = Categoria(request.form.get('nome'), request.form.get('desc'))
     db.session.add(categoria)
@@ -269,7 +273,7 @@ def cadastrar_categoria():
     return redirect(url_for('categoria'))
 
 @app.route("/categoria/editar/<int:id>", methods=['GET', 'POST'])
-#@login_required
+@login_required
 def editarcategoria(id):
     categoria = Categoria.query.get(id)
     if request.method == 'POST':
@@ -280,7 +284,7 @@ def editarcategoria(id):
     return render_template('categoria-edit.html', categoria=categoria, titulo="Editar Categoria")
 
 @app.route("/categoria/remover/<int:id>", methods=['POST'])
-#@login_required
+@login_required
 def removercategoria(id):
     categoria = Categoria.query.get(id)
     db.session.delete(categoria)
@@ -288,12 +292,12 @@ def removercategoria(id):
     return redirect(url_for('categoria'))
 
 @app.route("/relatorio/vendas")
-#@login_required
+@login_required
 def relatorio_venda():
     return render_template('vendas.html', anuncio=Anuncio.query.filter_by(usu_id=current_user.id).all(), titulo="Relatório de Vendas")
 
 @app.route("/relatorio/compras")
-#@login_required
+@login_required
 def relatoriocompra():
     return render_template('compra-realizada.html', compras=Compra.query.filter_by(usuario_id=current_user.id).all(), titulo="Relatório de Compras")
 

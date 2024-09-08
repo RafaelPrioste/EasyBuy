@@ -13,13 +13,12 @@
             <h2>{{titulo}}</h2>
         </div>
 
-        <form action="/anuncios/pergunta/enviar/{{anuncio.id}}" method="post">
+        <form action="/anuncio/pergunta/enviar/{{anuncio.id}}" method="post">
             <div class="form-group">
                 <label for="texto">Faça aqui a sua pergunta:</label>
                 <input type="text" class="form-control" id="texto" name="texto">
             </div>
 
-    
             <button type="submit" class="btn btn-success mt-2">Enviar</button>
         </form>
     </div>
@@ -30,7 +29,7 @@
         </div>
 
         <table class="table table-striped table-responsive table-bordered">
-            <thead class="thead-default">
+            <thead class="thead-light">
                 <tr>
                     <th>ID</th>
                     <th>Mensagem</th>
@@ -47,14 +46,14 @@
                         <td>{{ pergunta.anuncio_id }}</td>
                         <td>{{ pergunta.usuario_id }}</td>
                         <td>
-                            <a class="btn btn-outline-primary" href="/anuncios/resposta/enviar/{{pergunta.id}}">Responder</a>
+                            <a class="btn btn-outline-primary" href="/anuncio/resposta/enviar/{{pergunta.id}}">Responder</a>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     
-        <a class="btn btn-outline-secondary" href={{url_for('index')}}>Voltar</a>
+        <a class="btn btn-outline-secondary" href="{{url_for('index')}}">Voltar</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
